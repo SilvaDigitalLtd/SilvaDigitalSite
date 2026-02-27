@@ -6,6 +6,16 @@
 (function () {
   'use strict';
 
+  // ── Viewport detection (mobile vs desktop) ───────────────────────
+  const MOBILE_BREAKPOINT = 900;
+  function setViewport() {
+    const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+    document.documentElement.dataset.viewport = isMobile ? 'mobile' : 'desktop';
+  }
+  setViewport();
+  window.addEventListener('resize', setViewport);
+  window.addEventListener('orientationchange', () => { setTimeout(setViewport, 100); });
+
   // ── Scroll Reveal & Fade Out (reset and replay on every scroll in/out) ─
   const revealElements = document.querySelectorAll('.reveal');
   const revealTimeouts = new WeakMap();
@@ -51,6 +61,7 @@
   let navVisible = false;
 
   function handleNavScroll() {
+    if (!nav) return;
     const currentScroll = window.scrollY;
     const heroHeight = window.innerHeight * 0.6;
 
@@ -142,12 +153,15 @@
   // ── Smooth Anchor Scroll ──────────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (e) => {
-      e.preventDefault();
-      const target = document.querySelector(anchor.getAttribute('href'));
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.getElementById(href.slice(1));
       if (target) {
-        const offset = 40;
+        e.preventDefault();
+        const isMobile = document.documentElement.dataset.viewport === 'mobile';
+        const offset = isMobile ? 56 : 40;
         const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: top, behavior: 'smooth' });
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
       }
     });
   });
