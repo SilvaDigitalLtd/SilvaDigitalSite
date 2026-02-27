@@ -237,13 +237,43 @@
 
   // ── Contact Form Handling ─────────────────────────────────────
   const contactForm = document.getElementById('contactForm');
+  const originalBtnText = 'Send Message';
+
+  function showMessageToast() {
+    const toast = document.createElement('div');
+    toast.className = 'form-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.innerHTML = `
+      <svg class="form-toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="form-toast-text">Message sent</span>
+    `;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toast.classList.add('form-toast--visible');
+      });
+    });
+
+    const hide = () => {
+      toast.classList.remove('form-toast--visible');
+      toast.classList.add('form-toast--out');
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 420);
+    };
+
+    setTimeout(hide, 2600);
+  }
 
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const btn = contactForm.querySelector('.btn-submit');
       const btnText = btn.querySelector('.btn-text');
-      const originalText = btnText.textContent;
 
       const name = contactForm.querySelector('input[name="name"]').value.trim();
       const email = contactForm.querySelector('input[name="email"]').value.trim();
@@ -269,22 +299,18 @@
       ))
         .then((results) => {
           if (results.every(Boolean)) {
-            btnText.textContent = 'Message Sent';
-            btn.style.borderColor = 'rgba(139, 156, 198, 0.3)';
             contactForm.reset();
+            btnText.textContent = originalBtnText;
+            btn.disabled = false;
+            showMessageToast();
           } else {
-            btnText.textContent = 'Error — Try Again';
+            btnText.textContent = originalBtnText;
+            btn.disabled = false;
           }
         })
         .catch(() => {
-          btnText.textContent = 'Error — Try Again';
-        })
-        .finally(() => {
+          btnText.textContent = originalBtnText;
           btn.disabled = false;
-          setTimeout(() => {
-            btnText.textContent = originalText;
-            btn.style.borderColor = '';
-          }, 3000);
         });
     });
   }
