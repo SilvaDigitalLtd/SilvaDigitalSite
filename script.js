@@ -290,16 +290,19 @@
   }
 
 
-  // ── Ambient Orb Slow Drift ────────────────────────────────────
+  // ── Ambient Orb Slow Drift (desktop only; static on mobile to avoid background movement) ─
   const orbs = document.querySelectorAll('.orb');
+  const MOBILE_ORB_BREAKPOINT = 900;
 
   orbs.forEach((orb, i) => {
+    if (window.innerWidth <= MOBILE_ORB_BREAKPOINT) return;
     const speed = 0.0002 + i * 0.00005;
     const amplitude = 30 + i * 10;
     const offset = i * 1000;
     const hasTranslateX = orb.classList.contains('orb-1') || orb.classList.contains('orb-4');
 
     function driftOrb(now) {
+      if (window.innerWidth <= MOBILE_ORB_BREAKPOINT) return;
       const t = (now + offset) * speed;
       const dx = Math.sin(t) * amplitude;
       const dy = Math.cos(t * 0.7) * amplitude * 0.6;
