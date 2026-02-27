@@ -1291,6 +1291,34 @@ body::before {
    Viewport detection: script.js sets data-viewport="mobile"|"desktop" on <html> */
 
 @media (max-width: 900px) {
+  /* Prevent zoom-out and horizontal drift: lock viewport and overflow */
+  html {
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    position: relative;
+    overscroll-behavior-x: none;
+  }
+
+  /* Static background on mobile: no fixed attachment (stops shaking/jitter) */
+  .page-bg {
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-size: cover;
+  }
+
+  /* Orbs: no drift animation on mobile so background area stays static */
+  .hero .orb {
+    animation: none;
+    opacity: 0.4;
+  }
+
   /* Frame: slightly less inset so more content visible */
   body::before,
   .edge-mask {
@@ -1311,6 +1339,28 @@ body::before {
   }
   .container {
     padding: 0 clamp(20px, 5vw, 32px);
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Keep all sections and content centered, no horizontal escape */
+  .section,
+  .hero,
+  .services,
+  .capability-stack,
+  .process,
+  .philosophy,
+  .contact {
+    max-width: 100%;
+    width: 100%;
+  }
+  .hero-content,
+  .services-grid,
+  .capability-grid,
+  .glass-words-row,
+  .process-timeline,
+  .contact-inner {
+    max-width: 100%;
   }
 
   /* Hero: stacked, centered, same hierarchy */
